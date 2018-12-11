@@ -1,6 +1,12 @@
 // Core
 import React, { PureComponent } from 'react';
 
+//Components
+import  Checkbox  from '../../theme/assets/Checkbox';
+import  Star  from '../../theme/assets/Star';
+import  Edit  from '../../theme/assets/Edit';
+import  Remove  from '../../theme/assets/Remove';
+
 // Instruments
 import Styles from './styles.m.css';
 
@@ -20,18 +26,46 @@ export default class Task extends PureComponent {
     render () {
         const { comment } = this.props;
 
-        return (
+        return (           
             <li className = { Styles.task }>
                 <div className = { Styles.content }>
-                    <div className = { Styles.toggleTaskCompletedState }> </div>
-                    <input disabled type="text" value = { comment }/>                   
+                    <Checkbox
+                        inlineBlock
+                        checked = { false }
+                        className = { Styles.toggleTaskCompletedState }
+                        color1 = '#3B8EF3'
+                        color2 = '#FFF'
+                    /> 
+                    <input disabled maxlength = "50" type="text" value = { comment }/>                   
                 </div>
                 
-                <div className = { Styles.actions }> 
-                    <div className = { Styles.toggleTaskFavoriteState } >
-                    </div>
-                    <div className = { Styles.updateTaskMessageOnClick } >
-                    </div>            
+                <div className = { Styles.actions }>                     
+                    <Star
+                        inlineBlock
+                        hover = { false }
+                        disabled = {false}                                
+                        checked = { false }
+                        className = { Styles.toggleTaskFavoriteState }
+                        color1 = '#3B8EF3'
+                        color2 = '#000'
+                        color3 = '#3B8EF3'
+                    />
+                    <Edit   
+                        inlineBlock                         
+                        hover = { false }
+                        checked = { false }
+                        className = { Styles.updateTaskMessageOnClick }
+                        color1 = '#3B8EF3'
+                        color2 = '#000'
+                    />
+                    <Remove                           
+                        inlineBlock
+                        hover = { false }
+                        disabled = { false }   
+                        color1 = '#3B8EF3'
+                        color2 = '#000'
+                        color3 = '#3B8EF3'
+                    />                           
                 </div>
             </li>
         );
