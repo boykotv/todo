@@ -1,5 +1,6 @@
 // Core
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 //Components
 import  Checkbox  from '../../theme/assets/Checkbox';
@@ -11,6 +12,10 @@ import  Remove  from '../../theme/assets/Remove';
 import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
+    static propTypes = {
+        comment: PropTypes.string.isRequired,
+    };
+    
     _getTaskShape = ({
         id = this.props.id,
         completed = this.props.completed,
@@ -36,7 +41,7 @@ export default class Task extends PureComponent {
                         color1 = '#3B8EF3'
                         color2 = '#FFF'
                     /> 
-                    <input disabled maxlength = "50" type="text" value = { comment }/>                   
+                    <input disabled maxLength = "50" type="text" value = { comment }/>                   
                 </div>
                 
                 <div className = { Styles.actions }>                     
