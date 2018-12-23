@@ -13,7 +13,7 @@ import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
     static propTypes = {
-        comment: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
     };
     
     _getTaskShape = ({
@@ -29,7 +29,7 @@ export default class Task extends PureComponent {
     });
 
     render () {
-        const { comment } = this.props;
+        const { message } = this.props;
 
         return (           
             <li className = { Styles.task }>
@@ -41,7 +41,7 @@ export default class Task extends PureComponent {
                         color1 = '#3B8EF3'
                         color2 = '#FFF'
                     /> 
-                    <input disabled maxLength = "50" type="text" value = { comment }/>                   
+                    <input disabled maxLength = "50" type="text" value = { message }/>                   
                 </div>
                 
                 <div className = { Styles.actions }>                     
