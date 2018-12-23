@@ -5,18 +5,14 @@ import React, { Component } from 'react';
 import Task from 'components/Task';
 import  Checkbox  from '../../theme/assets/Checkbox';
 import Spinner from 'components/Spinner';
+import Composer from 'components/Composer';
 
 // Instruments
 import Styles from './styles.m.css';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
-    constructor() {
-        super();
-
-        this._createTask = this._createTask.bind(this);  
-        this._updateComment = this._updateComment.bind(this); 
-    }
+    
 
     state = {
         tasks: [
@@ -24,23 +20,6 @@ export default class Scheduler extends Component {
             {id: '2', comment: 'second task'},
         ],
         isPostFetching: true,
-    }
-
-    _createTask (comment) {
-        event.preventDefault();
-        console.log('_createTask');
-        const task = {
-            id: '1',
-            comment,
-        }
-
-        this.setState(({ tasks }) => ({
-            tasks: [tasks, ...tasks],
-        }));
-
-        console.log('this.state', this.state);
-
-        task
     }
 
     _updateComment ( event ) {
@@ -67,10 +46,7 @@ export default class Scheduler extends Component {
                     </header>
 
                     <section>
-                        <form onSubmit =  { this._createTask }>
-                            <input mexlength = "50" placeholder="Описание моей новой задачи"  onChange = { this._updateComment } type="text" />
-                            <button >Добавить задачу</button>
-                        </form>
+                        <Composer/>
                         <div>
                             <ul>
                                 <div style = { { position: 'relative' } }>
