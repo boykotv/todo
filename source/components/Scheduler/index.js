@@ -13,18 +13,6 @@ import { getUniqueID, delay } from 'instruments/helpers';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
-    constructor() {
-        super();
-        this._createTask = this._createTask.bind(this);
-        this._updateMessage = this._updateMessage.bind(this);
-        this._handleFormSubmit = this._handleFormSubmit.bind(this);
-        this._submitOnEnter = this._submitOnEnter.bind(this);
-        this._setTasksFetchingState = this._setTasksFetchingState.bind(this);   
-        this._favoriteTask = this._favoriteTask.bind(this);
-        this._removeTask = this._removeTask.bind(this);   
-        this._completeTask = this._completeTask.bind(this);           
-    }
-
     state = {
         tasks: [
             {id: '1', message: 'first task', completed: false, favorite: false},
@@ -34,13 +22,13 @@ export default class Scheduler extends Component {
         new_message: '',
     }
 
-    _setTasksFetchingState (state) {
+    _setTasksFetchingState = (state) => {
         this.setState({
             isPostFetching: state,
         });
     }
 
-    async _createTask () {
+    _createTask = async () => {
         this._setTasksFetchingState(true);
 
         const {new_message} = this.state;
@@ -50,6 +38,8 @@ export default class Scheduler extends Component {
         const task = {
             id: getUniqueID(),
             message: new_message,
+            completed: false, 
+            favorite: false,
         };
 
         await delay(1200);
@@ -61,18 +51,18 @@ export default class Scheduler extends Component {
         }));
     }
 
-    _updateMessage ( event ) {
+    _updateMessage = ( event ) => {
         this.setState({
             new_message: event.target.value,
         });
     } 
 
-    _handleFormSubmit (event) {
+    _handleFormSubmit = (event) => {
         event.preventDefault();
         this._createTask();
     }
 
-    _submitOnEnter (event) {        
+    _submitOnEnter = (event) => {        
         const enterKey = event.key === 'Enter';
 
         if (enterKey) {
@@ -81,7 +71,7 @@ export default class Scheduler extends Component {
         }
     }
 
-    async _favoriteTask (id) {
+    _favoriteTask = async (id) => {
         this._setTasksFetchingState(true);
         
         await delay(1200);
@@ -103,7 +93,7 @@ export default class Scheduler extends Component {
         });
     }
 
-    async _removeTask (id) {
+    _removeTask = async (id) => {
         this._setTasksFetchingState(true);
 
         await delay(1200);
@@ -116,7 +106,7 @@ export default class Scheduler extends Component {
         })
     }
 
-    async _completeTask (id) {
+    _completeTask = async (id) => {
         this._setTasksFetchingState(true);
         
         await delay(1200);
@@ -137,9 +127,6 @@ export default class Scheduler extends Component {
             isPostFetching: false,
         });
     }
-
-
-
 
     render () {
         const { tasks, isPostFetching, new_message } = this.state;

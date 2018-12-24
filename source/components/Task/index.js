@@ -1,6 +1,6 @@
 // Core
 import React, { PureComponent } from 'react';
-import { string, func } from 'prop-types';
+import { string, func, bool } from 'prop-types';
 
 //Components
 import  Checkbox  from '../../theme/assets/Checkbox';
@@ -12,15 +12,14 @@ import  Remove  from '../../theme/assets/Remove';
 import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
-    constructor() {
-        super();
-
-        this._favoriteTask = this._favoriteTask.bind(this); 
-        this._removeTask = this._removeTask.bind(this);            
-        this._completeTask = this._completeTask.bind(this); 
+    state = {
+        disabled: true,
     }
 
     static propTypes = {
+        id:            string.isRequired,          
+        completed:     bool.isRequired,
+        favorite:      bool.isRequired,
         message:       string.isRequired,
         _favoriteTask: func.isRequired,
         _removeTask:   func.isRequired,
@@ -39,23 +38,32 @@ export default class Task extends PureComponent {
         message,
     });
 
-    _favoriteTask () {
+    _favoriteTask = () => {
         const {_favoriteTask, id } = this.props;
         _favoriteTask(id);
     }
 
-    _removeTask () {
+    _removeTask = () => {
         const { _removeTask, id } = this.props;
         _removeTask(id);
     }
 
-    _completeTask () {
+    _completeTask = () => {
         const { _completeTask, id } = this.props;
         _completeTask(id);
     }
-    
+
+    _editTask = () => {
+        this.setState({
+            disabled: false,
+        });
+    }
+
+
     render () {
         const { message, favorite, completed } = this.props;
+        const { disabled } = this.state;
+        //const { id, completed, favorite, message } = this._getTaskShape(this.props);
 
         return (           
             <li className = { Styles.task }>
@@ -68,34 +76,38 @@ export default class Task extends PureComponent {
                         color2 = '#FFF'
                         onClick = { this._completeTask }
                     /> 
-                    <input disabled maxLength = "50" type="text" value = { message }/>                   
+                    <input 
+                        disabled = { disabled } 
+                        maxLength = "50" 
+                        type="text" 
+                        value = { message }
+                    />                   
                 </div>
                 
                 <div className = { Styles.actions }>                     
                     <Star
+                        onClick = { this._favoriteTask }
                         inlineBlock
-                        disabled = {false}                                
                         checked = { favorite }
                         className = { Styles.toggleTaskFavoriteState }
                         color1 = '#3B8EF3'
                         color2 = '#000'
-                        color3 = '#3B8EF3'
-                        onClick = { this._favoriteTask }
+                        color3 = '#3B8EF3'                        
                     />
                     <Edit   
+                        onClick = { this._editTask }
                         inlineBlock                         
-                        checked = { false }
+                        checked = { false }                        
                         className = { Styles.updateTaskMessageOnClick }
                         color1 = '#3B8EF3'
                         color2 = '#000'
                     />
-                    <Remove                           
+                    <Remove        
+                        onClick = { this._removeTask }                   
                         inlineBlock
-                        disabled = { false }   
                         color1 = '#3B8EF3'
                         color2 = '#000'
-                        color3 = '#3B8EF3'
-                        onClick = { this._removeTask }
+                        color3 = '#3B8EF3'                        
                     />                           
                 </div>
             </li>
