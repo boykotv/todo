@@ -119,16 +119,20 @@ export default class Scheduler extends Component {
     }
 
     _removeTask = async (id) => {
+        const { tasks } = this.state;
         this._setTasksFetchingState(true);
 
-        await delay(1200);
+        await fetch(`${api}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: TOKEN,
+            },
+        });
 
-        const newTasks = this.state.tasks.filter(task => task.id != id);
-        
         this.setState({
-            tasks: newTasks,
+            tasks:          tasks.filter((task) => task.id !== id),
             isPostFetching: false,
-        })
+        });
     }
 
     _completeTask = async (id) => {
