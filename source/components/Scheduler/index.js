@@ -19,22 +19,29 @@ export default class Scheduler extends Component {
         this._updateMessage = this._updateMessage.bind(this);
         this._handleFormSubmit = this._handleFormSubmit.bind(this);
         this._submitOnEnter = this._submitOnEnter.bind(this);
-        
+        this._setTasksFetchingState = this._setTasksFetchingState.bind(this);   
+        this._favoriteTask = this._favoriteTask.bind(this);
+        this._removeTask = this._removeTask.bind(this);   
+        this._completeTask = this._completeTask.bind(this);           
     }
 
     state = {
         tasks: [
-            {id: '1', message: 'first task'},
-            {id: '2', message: 'second task'},
+            {id: '1', message: 'first task', completed: false, favorite: false},
+            {id: '2', message: 'second task', completed: false, favorite: false},
         ],
         isPostFetching: false,
         new_message: '',
     }
 
-    async _createTask () {
+    _setTasksFetchingState (state) {
         this.setState({
-            isPostFetching: true,
+            isPostFetching: state,
         });
+    }
+
+    async _createTask () {
+        this._setTasksFetchingState(true);
 
         const {new_message} = this.state;
         if (!new_message) {
@@ -74,11 +81,75 @@ export default class Scheduler extends Component {
         }
     }
 
+    async _favoriteTask (id) {
+        this._setTasksFetchingState(true);
+        
+        await delay(1200);
+
+        const newTasks = this.state.tasks.map((task) => {
+            if ( task.id === id ) {
+                return {
+                    ...task,
+                    favorite: true,
+                };
+            }
+
+            return task;
+        });
+
+        this.setState({
+            tasks: newTasks,
+            isPostFetching: false,
+        });
+    }
+
+    async _removeTask (id) {
+        this._setTasksFetchingState(true);
+
+        await delay(1200);
+
+        const newTasks = this.state.tasks.filter(task => task.id != id);
+        
+        this.setState({
+            tasks: newTasks,
+            isPostFetching: false,
+        })
+    }
+
+    async _completeTask (id) {
+        this._setTasksFetchingState(true);
+        
+        await delay(1200);
+
+        const newTasks = this.state.tasks.map((task) => {
+            if ( task.id === id ) {
+                return {
+                    ...task,
+                    completed: true,
+                };
+            }
+
+            return task;
+        });
+
+        this.setState({
+            tasks: newTasks,
+            isPostFetching: false,
+        });
+    }
+
+
+
+
     render () {
         const { tasks, isPostFetching, new_message } = this.state;
        
         const tasksJSX = tasks.map(( task ) => {
-            return <Task key = { task.id } {...task} />;
+            return <Task key = { task.id } {...task} 
+                         _favoriteTask = { this._favoriteTask } 
+                         _removeTask = { this._removeTask } 
+                         _completeTask = { this._completeTask } 
+                    />;
         });
 
         return (
