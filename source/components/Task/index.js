@@ -1,6 +1,6 @@
 // Core
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { string, func } from 'prop-types';
 
 //Components
 import  Checkbox  from '../../theme/assets/Checkbox';
@@ -12,8 +12,19 @@ import  Remove  from '../../theme/assets/Remove';
 import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
+    constructor() {
+        super();
+
+        this._favoriteTask = this._favoriteTask.bind(this); 
+        this._removeTask = this._removeTask.bind(this);            
+        this._completeTask = this._completeTask.bind(this); 
+    }
+
     static propTypes = {
-        message: PropTypes.string.isRequired,
+        message:       string.isRequired,
+        _favoriteTask: func.isRequired,
+        _removeTask:   func.isRequired,
+        _completeTask: func.isRequired,
     };
     
     _getTaskShape = ({
@@ -28,18 +39,34 @@ export default class Task extends PureComponent {
         message,
     });
 
+    _favoriteTask () {
+        const {_favoriteTask, id } = this.props;
+        _favoriteTask(id);
+    }
+
+    _removeTask () {
+        const { _removeTask, id } = this.props;
+        _removeTask(id);
+    }
+
+    _completeTask () {
+        const { _completeTask, id } = this.props;
+        _completeTask(id);
+    }
+    
     render () {
-        const { message } = this.props;
+        const { message, favorite, completed } = this.props;
 
         return (           
             <li className = { Styles.task }>
                 <div className = { Styles.content }>
                     <Checkbox
                         inlineBlock
-                        checked = { false }
+                        checked = { completed }
                         className = { Styles.toggleTaskCompletedState }
                         color1 = '#3B8EF3'
                         color2 = '#FFF'
+                        onClick = { this._completeTask }
                     /> 
                     <input disabled maxLength = "50" type="text" value = { message }/>                   
                 </div>
@@ -47,17 +74,16 @@ export default class Task extends PureComponent {
                 <div className = { Styles.actions }>                     
                     <Star
                         inlineBlock
-                        hover = { false }
                         disabled = {false}                                
-                        checked = { false }
+                        checked = { favorite }
                         className = { Styles.toggleTaskFavoriteState }
                         color1 = '#3B8EF3'
                         color2 = '#000'
                         color3 = '#3B8EF3'
+                        onClick = { this._favoriteTask }
                     />
                     <Edit   
                         inlineBlock                         
-                        hover = { false }
                         checked = { false }
                         className = { Styles.updateTaskMessageOnClick }
                         color1 = '#3B8EF3'
@@ -65,11 +91,11 @@ export default class Task extends PureComponent {
                     />
                     <Remove                           
                         inlineBlock
-                        hover = { false }
                         disabled = { false }   
                         color1 = '#3B8EF3'
                         color2 = '#000'
                         color3 = '#3B8EF3'
+                        onClick = { this._removeTask }
                     />                           
                 </div>
             </li>
