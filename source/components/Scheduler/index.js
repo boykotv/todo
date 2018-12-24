@@ -9,7 +9,7 @@ import Spinner from 'components/Spinner';
 
 // Instruments
 import Styles from './styles.m.css';
-import { getUniqueID } from 'instruments/helpers';
+import { getUniqueID, delay } from 'instruments/helpers';
 import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
@@ -27,11 +27,15 @@ export default class Scheduler extends Component {
             {id: '1', message: 'first task'},
             {id: '2', message: 'second task'},
         ],
-        isPostFetching: true,
+        isPostFetching: false,
         new_message: '',
     }
 
-    _createTask ( event ) {
+    async _createTask () {
+        this.setState({
+            isPostFetching: true,
+        });
+
         const {new_message} = this.state;
         if (!new_message) {
             return null;
@@ -41,9 +45,12 @@ export default class Scheduler extends Component {
             message: new_message,
         };
 
+        await delay(1200);
+
         this.setState(({tasks}) => ({
             tasks: [task, ...tasks],
             new_message: '',
+            isPostFetching: false,
         }));
     }
 
@@ -85,7 +92,6 @@ export default class Scheduler extends Component {
                     </header>
 
                     <section>
-                        {/* <Composer/> */}
                         <form onSubmit =  { this._handleFormSubmit }>
                             <input 
                                 mexlength = "50" 

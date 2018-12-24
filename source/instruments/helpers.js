@@ -73,3 +73,9 @@ export const getUniqueID = (length = 15) => {
 
     return text;
 };
+
+export const delay = (duration = 1000) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, duration);
+    });
+};
