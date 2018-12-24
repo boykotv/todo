@@ -10,6 +10,7 @@ import  Remove  from '../../theme/assets/Remove';
 
 // Instruments
 import Styles from './styles.m.css';
+import { throttle } from 'rxjs/operator/throttle';
 
 export default class Task extends PureComponent {
     state = {

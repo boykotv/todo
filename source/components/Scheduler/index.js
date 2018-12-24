@@ -5,21 +5,22 @@ import React, { Component } from 'react';
 import Task from 'components/Task';
 import  Checkbox  from '../../theme/assets/Checkbox';
 import Spinner from 'components/Spinner';
-//import Composer from 'components/Composer';
+import Catcher from 'components/Catcher';
 
 // Instruments
 import Styles from './styles.m.css';
-import { getUniqueID, delay } from 'instruments/helpers';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { delay } from 'instruments/helpers';
+import { MAIN_URL as api, TOKEN } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
     state = {
-        tasks: [
-            {id: '1', message: 'first task', completed: false, favorite: false},
-            {id: '2', message: 'second task', completed: false, favorite: false},
-        ],
+        tasks:          [],
         isPostFetching: false,
-        new_message: '',
+        new_message:    '',
+    }
+
+    componentDidMount() {
+        this._fetchTasks();        
     }
 
     _setTasksFetchingState = (state) => {
@@ -28,21 +29,45 @@ export default class Scheduler extends Component {
         });
     }
 
+    _fetchTasks = async () => {
+        
+        this._setTasksFetchingState(true);
+        
+        const response = await fetch(api, {
+            method: 'GET',
+            headers: {
+                Authorization: TOKEN,
+            },
+        });
+        
+        const { data: tasks } = await response.json();
+
+        this.setState({
+            tasks,
+            isPostFetching: false,
+        });
+    };
+
+
     _createTask = async () => {
         this._setTasksFetchingState(true);
 
         const {new_message} = this.state;
+        
         if (!new_message) {
             return null;
-        }
-        const task = {
-            id: getUniqueID(),
-            message: new_message,
-            completed: false, 
-            favorite: false,
-        };
+        }        
 
-        await delay(1200);
+        const response = await fetch(api, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: TOKEN,
+            },
+            body: JSON.stringify({ 'message': new_message }),
+        });
+        
+        const { data: task } = await response.json();
 
         this.setState(({tasks}) => ({
             tasks: [task, ...tasks],
@@ -132,11 +157,13 @@ export default class Scheduler extends Component {
         const { tasks, isPostFetching, new_message } = this.state;
        
         const tasksJSX = tasks.map(( task ) => {
-            return <Task key = { task.id } {...task} 
-                         _favoriteTask = { this._favoriteTask } 
-                         _removeTask = { this._removeTask } 
-                         _completeTask = { this._completeTask } 
-                    />;
+            return <Catcher key = { task.id }>
+                        <Task  {...task} 
+                              _favoriteTask = { this._favoriteTask } 
+                              _removeTask = { this._removeTask } 
+                              _completeTask = { this._completeTask } 
+                        />
+                    </Catcher>;
         });
 
         return (
