@@ -9,7 +9,6 @@ import Catcher from 'components/Catcher';
 
 // Instruments
 import Styles from './styles.m.css';
-import { delay } from 'instruments/helpers';
 import { MAIN_URL as api, TOKEN } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
@@ -139,7 +138,6 @@ export default class Scheduler extends Component {
                         <Task  {...task} 
                               _updateTask = { this._updateTask } 
                               _removeTask = { this._removeTask } 
-                              //_completeTask = { this._completeTask } 
                         />
                     </Catcher>;
         });
