@@ -44,6 +44,14 @@ export default class Task extends PureComponent {
         message,
     });
 
+
+    componentDidUpdate(nextProps, nextState) {
+        const { disabled } = this.state;
+        if (!disabled) {           
+            this.textInput.current.focus();
+        }
+    }
+
     _favoriteTask = () => {
         const { _updateTask, id, message, completed, favorite } = this.props;
 
@@ -77,8 +85,6 @@ export default class Task extends PureComponent {
             this.setState({
                 disabled: false,
             });
-
-            this.textInput.current.focus(); //????????????????????????????
         }
         else {
             this.setState({
@@ -96,11 +102,15 @@ export default class Task extends PureComponent {
 
     _submitOnEnter = (event) => {  
         if (event.keyCode == '13') {
+            const { message } = this.state;  
+            if (!message) {
+                return null;
+            } 
             this.setState({
                 disabled: true,
             });
             const { _updateTask, id, completed, favorite } = this.props;
-            const { message } = this.state;
+
             _updateTask([{ 
                 'id':        id,
                 'message':   message,
