@@ -96,40 +96,6 @@ export default class Scheduler extends Component {
         }
     }
 
-
-
-/*     _favoriteTask = (id) => {
-        this._setTasksFetchingState(true);
-               
-        const tasks = this.state.tasks;
-        const upd_task = tasks.filter((task) => task.id === id)[0];                
-
-        const {message, completed, favorite} = upd_task;
-
-        this._updateTask([{ 
-            'id':        id,
-            'message':   message,
-            'completed': completed,
-            'favorite':  favorite,
-        }]);
-    } */
-
-/*     _completeTask = async (id, completed) => {
-        this._setTasksFetchingState(true);
-               
-        const tasks = this.state.tasks;
-        const upd_task = tasks.filter((task) => task.id === id)[0];                
-
-        const {message, favorite} = upd_task;
-
-        this._updateTask([{ 
-            'id':        id,
-            'message':   message,
-            'completed': completed,
-            'favorite':  favorite,
-        }]);
-    } */
-
     _removeTask = async (id) => {
         const { tasks } = this.state;
         this._setTasksFetchingState(true);
