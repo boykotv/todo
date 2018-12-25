@@ -16,7 +16,6 @@ export default class Scheduler extends Component {
         tasks:          [],
         isPostFetching: false,
         new_message:    '',
-        completeAll: false,
     }
 
     componentDidMount() {
@@ -155,7 +154,6 @@ export default class Scheduler extends Component {
         this.setState({
             tasks: tasks_new,
             isPostFetching: false,
-            completeAll: true,
         });
     };
 
