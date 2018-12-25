@@ -21,11 +21,10 @@ export default class Task extends PureComponent {
         completed:     bool.isRequired,
         favorite:      bool.isRequired,
         message:       string.isRequired,
-        _favoriteTask: func.isRequired,
+        _updateTask:   func.isRequired,
         _removeTask:   func.isRequired,
-        _completeTask: func.isRequired,
-    };
-    
+    };   
+
     _getTaskShape = ({
         id = this.props.id,
         completed = this.props.completed,
@@ -39,18 +38,30 @@ export default class Task extends PureComponent {
     });
 
     _favoriteTask = () => {
-        const {_favoriteTask, id } = this.props;
-        _favoriteTask(id);
+        const { _updateTask, id, message, completed, favorite } = this.props;
+
+        _updateTask([{ 
+            'id':        id,
+            'message':   message,
+            'completed': completed,
+            'favorite':  !favorite,
+        }]);
+    }
+
+    _completeTask = () => {
+        const { _updateTask, id, message, completed, favorite } = this.props;
+
+        _updateTask([{ 
+            'id':        id,
+            'message':   message,
+            'completed': !completed,
+            'favorite':  favorite,
+        }]);
     }
 
     _removeTask = () => {
         const { _removeTask, id } = this.props;
         _removeTask(id);
-    }
-
-    _completeTask = () => {
-        const { _completeTask, id } = this.props;
-        _completeTask(id);
     }
 
     _editTask = () => {
@@ -59,8 +70,8 @@ export default class Task extends PureComponent {
         });
     }
 
-
     render () {
+        
         const { message, favorite, completed } = this.props;
         const { disabled } = this.state;
         //const { id, completed, favorite, message } = this._getTaskShape(this.props);
