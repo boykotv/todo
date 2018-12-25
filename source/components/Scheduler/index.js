@@ -98,24 +98,32 @@ export default class Scheduler extends Component {
 
     _favoriteTask = async (id) => {
         this._setTasksFetchingState(true);
-        
-        await delay(1200);
+               
+        const tasks2 = this.state.tasks;
+        const upd_task = tasks2.filter((task) => task.id === id)[0];
 
-        const newTasks = this.state.tasks.map((task) => {
-            if ( task.id === id ) {
-                return {
-                    ...task,
-                    favorite: true,
-                };
-            }
+        const {message, completed, favorite} = upd_task;
 
-            return task;
+        const response = await fetch(api, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: TOKEN,
+            },
+            body: JSON.stringify([{ 
+                    'id':        id,
+                    'message':   message,
+                    'completed': true,//completed,
+                    'favorite':  favorite,
+                }]),
         });
 
-        this.setState({
-            tasks: newTasks,
+        const { data: tasks_new } = await response.json();
+
+        this.setState(({ tasks }) => ({
+            tasks: tasks.map((task) => task.id === tasks_new[0].id ? tasks_new[0] : task),
             isPostFetching: false,
-        });
+        }));
     }
 
     _removeTask = async (id) => {
