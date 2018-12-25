@@ -96,35 +96,39 @@ export default class Scheduler extends Component {
         }
     }
 
-    _favoriteTask = async (id) => {
+
+
+/*     _favoriteTask = (id) => {
         this._setTasksFetchingState(true);
                
-        const tasks2 = this.state.tasks;
-        const upd_task = tasks2.filter((task) => task.id === id)[0];
+        const tasks = this.state.tasks;
+        const upd_task = tasks.filter((task) => task.id === id)[0];                
 
         const {message, completed, favorite} = upd_task;
 
-        const response = await fetch(api, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: TOKEN,
-            },
-            body: JSON.stringify([{ 
-                    'id':        id,
-                    'message':   message,
-                    'completed': true,//completed,
-                    'favorite':  favorite,
-                }]),
-        });
+        this._updateTask([{ 
+            'id':        id,
+            'message':   message,
+            'completed': completed,
+            'favorite':  favorite,
+        }]);
+    } */
 
-        const { data: tasks_new } = await response.json();
+/*     _completeTask = async (id, completed) => {
+        this._setTasksFetchingState(true);
+               
+        const tasks = this.state.tasks;
+        const upd_task = tasks.filter((task) => task.id === id)[0];                
 
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map((task) => task.id === tasks_new[0].id ? tasks_new[0] : task),
-            isPostFetching: false,
-        }));
-    }
+        const {message, favorite} = upd_task;
+
+        this._updateTask([{ 
+            'id':        id,
+            'message':   message,
+            'completed': completed,
+            'favorite':  favorite,
+        }]);
+    } */
 
     _removeTask = async (id) => {
         const { tasks } = this.state;
@@ -143,26 +147,22 @@ export default class Scheduler extends Component {
         });
     }
 
-    _completeTask = async (id) => {
-        this._setTasksFetchingState(true);
-        
-        await delay(1200);
-
-        const newTasks = this.state.tasks.map((task) => {
-            if ( task.id === id ) {
-                return {
-                    ...task,
-                    completed: true,
-                };
-            }
-
-            return task;
+    _updateTask = async (params) => {
+        const response = await fetch(api, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: TOKEN,
+            },
+            body: JSON.stringify(params),
         });
 
-        this.setState({
-            tasks: newTasks,
+        const { data: tasks_new } = await response.json();
+
+        this.setState(({ tasks }) => ({
+            tasks: tasks.map((task) => task.id === tasks_new[0].id ? tasks_new[0] : task),
             isPostFetching: false,
-        });
+        }));
     }
 
     render () {
@@ -171,9 +171,9 @@ export default class Scheduler extends Component {
         const tasksJSX = tasks.map(( task ) => {
             return <Catcher key = { task.id }>
                         <Task  {...task} 
-                              _favoriteTask = { this._favoriteTask } 
+                              _updateTask = { this._updateTask } 
                               _removeTask = { this._removeTask } 
-                              _completeTask = { this._completeTask } 
+                              //_completeTask = { this._completeTask } 
                         />
                     </Catcher>;
         });
