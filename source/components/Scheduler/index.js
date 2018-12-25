@@ -16,6 +16,7 @@ export default class Scheduler extends Component {
         tasks:          [],
         isPostFetching: false,
         new_message:    '',
+        completeAll: false,
     }
 
     componentDidMount() {
@@ -130,8 +131,49 @@ export default class Scheduler extends Component {
         }));
     }
 
+
+    
+    _completeAll = async () => {
+        const { tasks } = this.state;
+        this._setTasksFetchingState(true);
+
+        tasks.map((task) => {
+            task.completed = true
+        });
+        
+        const response = await fetch(api, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: TOKEN,
+            },
+            body: JSON.stringify(tasks),
+        });
+
+        const { data: tasks_new } = await response.json();
+
+        this.setState({
+            tasks: tasks_new,
+            isPostFetching: false,
+            completeAll: true,
+        });
+    };
+
+
+
     render () {
         const { tasks, isPostFetching, new_message } = this.state;
+
+        let completeAll;
+        if (tasks.length > 0) {
+            completeAll = true;
+            tasks.map((task) => {
+                if (!task.completed) return completeAll = false;
+            });   
+        }
+        else {
+            completeAll = false;             
+        }
        
         const tasksJSX = tasks.map(( task ) => {
             return <Catcher key = { task.id }>
@@ -175,8 +217,9 @@ export default class Scheduler extends Component {
 
                     <footer>
                         <Checkbox
+                            onClick = { this._completeAll }
                             Block
-                            checked = { false }
+                            checked = { completeAll }
                             className = { Styles.toggleTaskCompletedState }
                             color1 = '#363636'
                             color2 = '#FFF'
