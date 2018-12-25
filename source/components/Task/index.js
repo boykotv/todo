@@ -12,8 +12,15 @@ import  Remove  from '../../theme/assets/Remove';
 import Styles from './styles.m.css';
 
 export default class Task extends PureComponent {
+    constructor(props) {
+        super(props);
+        // create a ref to store the textInput DOM element
+        this.textInput = React.createRef();
+      }
+
     state = {
         disabled: true,
+        message: this.props.message,
     }
 
     static propTypes = {
@@ -65,15 +72,54 @@ export default class Task extends PureComponent {
     }
 
     _editTask = () => {
+        const { disabled } = this.state;
+        if (disabled) {
+            this.setState({
+                disabled: false,
+            });
+
+            this.textInput.current.focus(); //????????????????????????????
+        }
+        else {
+            this.setState({
+                message: this.props.message,
+                disabled: true,
+            });
+        }
+    }
+
+    _updateMessage = ( event ) => {
         this.setState({
-            disabled: false,
-        });
+            message: event.target.value,
+        });       
+    } 
+
+    _submitOnEnter = (event) => {  
+        if (event.keyCode == '13') {
+            this.setState({
+                disabled: true,
+            });
+            const { _updateTask, id, completed, favorite } = this.props;
+            const { message } = this.state;
+            _updateTask([{ 
+                'id':        id,
+                'message':   message,
+                'completed': completed,
+                'favorite':  favorite,
+            }]);
+        }
+        else if (event.keyCode == '27') {            
+            this.setState({
+                message: this.props.message,
+                disabled: true,
+            });
+        }
     }
 
     render () {
         
-        const { message, favorite, completed } = this.props;
-        const { disabled } = this.state;
+        const { favorite, completed } = this.props;
+        const { disabled, message } = this.state;
         //const { id, completed, favorite, message } = this._getTaskShape(this.props);
 
         return (           
@@ -92,6 +138,10 @@ export default class Task extends PureComponent {
                         maxLength = "50" 
                         type="text" 
                         value = { message }
+                        onChange = { this._updateMessage } 
+                        onKeyDown = { this._submitOnEnter } 
+                        
+                        ref={this.textInput}
                     />                   
                 </div>
                 
@@ -108,7 +158,7 @@ export default class Task extends PureComponent {
                     <Edit   
                         onClick = { this._editTask }
                         inlineBlock                         
-                        checked = { false }                        
+                        checked = { !disabled }                        
                         className = { Styles.updateTaskMessageOnClick }
                         color1 = '#3B8EF3'
                         color2 = '#000'
