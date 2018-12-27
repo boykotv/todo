@@ -6,6 +6,7 @@ import Task from 'components/Task';
 import  Checkbox  from '../../theme/assets/Checkbox';
 import Spinner from 'components/Spinner';
 import Catcher from 'components/Catcher';
+import { sortTasksByGroup } from 'instruments/helpers';
 
 // Instruments
 import Styles from './styles.m.css';
@@ -42,7 +43,7 @@ export default class Scheduler extends Component {
         const { data: tasks } = await response.json();
 
         this.setState({
-            tasks,
+            tasks: sortTasksByGroup(tasks),
             isPostFetching: false,
         });
     };
@@ -122,15 +123,19 @@ export default class Scheduler extends Component {
             body: JSON.stringify(params),
         });
 
-        const { data: tasks_new } = await response.json();
+        const { data: tasks_new } = await response.json(); 
 
         this.setState(({ tasks }) => ({
             tasks: tasks.map((task) => task.id === tasks_new[0].id ? tasks_new[0] : task),
             isPostFetching: false,
         }));
+
+        //sort
+        const {tasks} = this.state;
+        this.setState({
+            tasks: sortTasksByGroup(tasks),
+        });
     }
-
-
     
     _completeAll = async () => {
         const { tasks } = this.state;
@@ -152,12 +157,10 @@ export default class Scheduler extends Component {
         const { data: tasks_new } = await response.json();
 
         this.setState({
-            tasks: tasks_new,
+            tasks: sortTasksByGroup(tasks_new),
             isPostFetching: false,
         });
     };
-
-
 
     render () {
         const { tasks, isPostFetching, new_message } = this.state;
