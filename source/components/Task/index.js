@@ -145,7 +145,7 @@ export default class Task extends PureComponent {
                     /> 
                     <input 
                         disabled = { disabled } 
-                        maxLength = "5" 
+                        maxLength = "50" 
                         type="text" 
                         value = { message }
                         onChange = { this._updateMessage } 
