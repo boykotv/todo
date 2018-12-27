@@ -10,7 +10,7 @@ import { sortTasksByGroup } from 'instruments/helpers';
 
 // Instruments
 import Styles from './styles.m.css';
-import { MAIN_URL as api, TOKEN } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { api, TOKEN } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
 
 export default class Scheduler extends Component {
     state = {
@@ -19,56 +19,40 @@ export default class Scheduler extends Component {
         new_message:    '',
     }
 
-    componentDidMount() {
-        this._fetchTasks();        
-    }
-
     _setTasksFetchingState = (state) => {
         this.setState({
             isPostFetching: state,
         });
     }
 
-    _fetchTasks = async () => {
-        
+    async componentDidMount() {
         this._setTasksFetchingState(true);
-        
-        const response = await fetch(api, {
-            method: 'GET',
-            headers: {
-                Authorization: TOKEN,
-            },
-        });
-        
-        const { data: tasks } = await response.json();
+        const tasks = await api.fetchTasks();          
 
         this.setState({
-            tasks: sortTasksByGroup(tasks),
+          tasks,
+          isPostFetching: false,
+        });
+    }
+
+    _filterTasks = ( event ) => {       
+        console.log('event.target.value', event.target.value);
+        const { tasks } = this.state;
+        this.setState({
+            tasks:          tasks.filter((task) => task.message.match(event.target.value)),
             isPostFetching: false,
         });
-    };
-
+    } 
 
     _createTask = async () => {
         this._setTasksFetchingState(true);
-
-        const {new_message} = this.state;
         
+        const {new_message} = this.state;        
         if (!new_message) {
             return null;
         }        
 
-        const response = await fetch(api, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: TOKEN,
-            },
-            body: JSON.stringify({ 'message': new_message }),
-        });
-        
-        const { data: task } = await response.json();
-
+        const task = await api.createTask(new_message);        
         this.setState(({tasks}) => ({
             tasks: [task, ...tasks],
             new_message: '',
@@ -96,16 +80,11 @@ export default class Scheduler extends Component {
         }
     }
 
-    _removeTask = async (id) => {
-        const { tasks } = this.state;
+    _removeTask = async (id) => {        
         this._setTasksFetchingState(true);
+        const { tasks } = this.state;        
 
-        await fetch(`${api}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                Authorization: TOKEN,
-            },
-        });
+        api.removeTask(id);   
 
         this.setState({
             tasks:          tasks.filter((task) => task.id !== id),
@@ -113,17 +92,8 @@ export default class Scheduler extends Component {
         });
     }
 
-    _updateTask = async (params) => {
-        const response = await fetch(api, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: TOKEN,
-            },
-            body: JSON.stringify(params),
-        });
-
-        const { data: tasks_new } = await response.json(); 
+    _updateTask = async (params) => {        
+        const tasks_new = await api.updateTask(params);      
 
         this.setState(({ tasks }) => ({
             tasks: tasks.map((task) => task.id === tasks_new[0].id ? tasks_new[0] : task),
@@ -137,29 +107,18 @@ export default class Scheduler extends Component {
         });
     }
     
-    _completeAll = async () => {
+    _completeAllTasks = async () => {
         const { tasks } = this.state;
         this._setTasksFetchingState(true);
 
-        tasks.map((task) => {
-            task.completed = true
-        });
+        //tasks.map((task) => { task.completed = true });
         
-        const response = await fetch(api, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: TOKEN,
-            },
-            body: JSON.stringify(tasks),
-        });
+        const new_tasks =  api.completeAllTasks(tasks);    
 
-        const { data: tasks_new } = await response.json();
-
-        this.setState({
-            tasks: sortTasksByGroup(tasks_new),
+        /* this.setState({
+            tasks: sortTasksByGroup(new_tasks),
             isPostFetching: false,
-        });
+        }); */
     };
 
     render () {
@@ -186,13 +145,15 @@ export default class Scheduler extends Component {
         });
 
         return (
+            
+
             <section className = { Styles.scheduler }>
                 <Spinner isSpinning = { isPostFetching } />
                 <main>
                     
                     <header>
                         <h1>Планировщик задач</h1>
-                        <input type="text"/>
+                        <input type="text" onChange = { this._filterTasks } />
                     </header>
 
                     <section>
@@ -218,7 +179,7 @@ export default class Scheduler extends Component {
 
                     <footer>
                         <Checkbox
-                            onClick = { this._completeAll }
+                            onClick = { this._completeAllTasks }
                             Block
                             checked = { completeAll }
                             className = { Styles.toggleTaskCompletedState }
@@ -230,6 +191,7 @@ export default class Scheduler extends Component {
 
                 </main>
             </section>
+          
         );
     }
 }
