@@ -195,7 +195,7 @@ export default class Scheduler extends Component {
                     <section>
                         <form onSubmit =  { this._handleFormSubmit }>
                             <input 
-                                mexlength = "50" 
+                                maxLength = "50"
                                 placeholder="Описание моей новой задачи" 
                                 type="text" 
                                 onChange = { this._updateMessage } 
