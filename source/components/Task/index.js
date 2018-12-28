@@ -28,8 +28,8 @@ export default class Task extends PureComponent {
         completed:     bool.isRequired,
         favorite:      bool.isRequired,
         message:       string.isRequired,
-        _updateTask:   func.isRequired,
-        _removeTask:   func.isRequired,
+        _updateTaskAsync:   func.isRequired,
+        _removeTaskAsync:   func.isRequired,
     };   
 
     _getTaskShape = ({
@@ -53,9 +53,9 @@ export default class Task extends PureComponent {
     }
 
     _favoriteTask = () => {
-        const { _updateTask, id, message, completed, favorite } = this.props;
+        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
 
-        _updateTask([{ 
+        _updateTaskAsync([{ 
             'id':        id,
             'message':   message,
             'completed': completed,
@@ -64,9 +64,9 @@ export default class Task extends PureComponent {
     }
 
     _completeTask = () => {
-        const { _updateTask, id, message, completed, favorite } = this.props;
+        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
 
-        _updateTask([{ 
+        _updateTaskAsync([{ 
             'id':        id,
             'message':   message,
             'completed': !completed,
@@ -74,9 +74,9 @@ export default class Task extends PureComponent {
         }]);
     }
 
-    _removeTask = () => {
-        const { _removeTask, id } = this.props;
-        _removeTask(id);
+    _removeTaskAsync = () => {
+        const { _removeTaskAsync, id } = this.props;
+        _removeTaskAsync(id);
     }
 
     _editTask = () => {
@@ -109,9 +109,9 @@ export default class Task extends PureComponent {
             this.setState({
                 disabled: true,
             });
-            const { _updateTask, id, completed, favorite } = this.props;
+            const { _updateTaskAsync, id, completed, favorite } = this.props;
 
-            _updateTask([{ 
+            _updateTaskAsync([{ 
                 'id':        id,
                 'message':   message,
                 'completed': completed,
@@ -132,14 +132,7 @@ export default class Task extends PureComponent {
         const { disabled, message } = this.state;
         //const { id, completed, favorite, message } = this._getTaskShape(this.props);
 
-        return (       
-            
-
-            
-
-
-
-
+        return (      
                 <li className = { Styles.task }>
                     <div className = { Styles.content }>
                         <Checkbox
@@ -181,7 +174,7 @@ export default class Task extends PureComponent {
                             color2 = '#000'
                         />
                         <Remove        
-                            onClick = { this._removeTask }                   
+                            onClick = { this._removeTaskAsync }                   
                             inlineBlock
                             color1 = '#3B8EF3'
                             color2 = '#000'
