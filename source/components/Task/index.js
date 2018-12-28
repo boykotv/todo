@@ -14,8 +14,8 @@ import Styles from './styles.m.css';
 export default class Task extends PureComponent {
     constructor(props) {
         super(props);
-        // create a ref to store the textInput DOM element
-        this.textInput = React.createRef();
+        // create a ref to store the taskInput DOM element
+        this.taskInput = React.createRef();
       }
 
     state = {
@@ -28,9 +28,14 @@ export default class Task extends PureComponent {
         completed:     bool.isRequired,
         favorite:      bool.isRequired,
         message:       string.isRequired,
+        created:       string.isRequired,
+        modified:      string.isRequired,
         _updateTaskAsync:   func.isRequired,
         _removeTaskAsync:   func.isRequired,
     };   
+    static defaultProps = {
+        modified: '',
+    };
 
     _getTaskShape = ({
         id = this.props.id,
@@ -48,7 +53,7 @@ export default class Task extends PureComponent {
     componentDidUpdate(nextProps, nextState) {
         const { disabled } = this.state;
         if (!disabled) {           
-            this.textInput.current.focus();
+            this.taskInput.current.focus();
         }
     }
 
@@ -151,7 +156,7 @@ export default class Task extends PureComponent {
                             onChange = { this._updateMessage } 
                             onKeyDown = { this._submitOnEnter } 
                             
-                            ref={this.textInput}
+                            ref={this.taskInput}
                         />                   
                     </div>
                     
