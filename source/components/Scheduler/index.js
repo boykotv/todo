@@ -31,7 +31,7 @@ export default class Scheduler extends Component {
         const tasks = await api.fetchTasks();          
 
         this.setState({
-          tasks,
+          tasks: sortTasksByGroup(tasks),
           isTasksFetching: false,
         });
     }
@@ -112,15 +112,14 @@ export default class Scheduler extends Component {
         const { tasks } = this.state;
         this._setTasksFetchingState(true);
 
-        //tasks.map((task) => { task.completed = true });
-        
-        const new_tasks =   api.completeAllTasks(tasks);    
+        api.completeAllTasks(tasks);
 
-        //console.log('new', new_tasks);
-        /* this.setState({
-            tasks: sortTasksByGroup(new_tasks),
+        tasks.map((task) => { task.completed = true });
+        
+        this.setState({
+            tasks: sortTasksByGroup(tasks),
             isTasksFetching: false,
-        }); */
+        });
     };
 
     render () {
@@ -146,11 +145,10 @@ export default class Scheduler extends Component {
                     </Catcher>;
         });
 
-        return (
-            
+        return (            
 
             <section className = { Styles.scheduler }>
-                <Spinner isSpinning = { isTasksFetching } />
+                <Spinner isTasksFetching = { isTasksFetching } />
                 <main>
                     
                     <header>
