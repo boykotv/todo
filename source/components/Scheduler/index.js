@@ -39,12 +39,9 @@ export default class Scheduler extends Component {
         this._setTasksFetchingState(false);
     }
 
-    _updateTasksFilter = ( event ) => {       
-        console.log('event.target.value', event.target.value);
-        const { tasks } = this.state;
+    _updateTasksFilter = ( event ) => {        
         this.setState({
-            tasks:          tasks.filter((task) => task.message.match(event.target.value)),
-            isTasksFetching: false,
+            tasksFilter: event.target.value.toLowerCase(),
         });
     } 
 
@@ -112,25 +109,24 @@ export default class Scheduler extends Component {
         this._setTasksFetchingState(false);
     }
     
-    _completeAllTasksAsync = async () => {
-        const completeAll = this._getAllCompleted();
-        if ( completeAll ) {
+    _completeAllTasksAsync = async () => {        
+        const completeAll = this._getAllCompleted();        
+        if ( completeAll === true ) { //all tasks are completed
             return null;
         }
+        
         this._setTasksFetchingState(true);
-        
         const { tasks } = this.state;
+           
+        const tasks_for_complete = tasks.filter((task) => task.completed === false );    
+        console.log('tasks_for_complete', tasks_for_complete);
         
-        //+await
+        await api.completeAllTasks(tasks_for_complete); //передать только невыполненые
 
-        api.completeAllTasks(task); //передать только невыполненые
-
-        tasks.map((task) => task.completed = true );
-        
+        tasks.map((task) => task.completed = true );        
         this.setState({
             tasks: sortTasksByGroup(tasks),
-        });
-        
+        });        
         this._setTasksFetchingState(false);
     };
 
@@ -203,11 +199,9 @@ export default class Scheduler extends Component {
                     <footer>
                         <Checkbox
                             onClick = { this._completeAllTasksAsync }
-                            Block
                             checked = { completeAll }
-                            className = { Styles.toggleTaskCompletedState }
                             color1 = '#363636'
-                            color2 = '#FFF'
+                            color2 = '#fff'
                         /> 
                         <span className = { Styles.completeAllTasks }>Все задачи выполнены</span>
                     </footer>

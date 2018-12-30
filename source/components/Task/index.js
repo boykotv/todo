@@ -160,7 +160,7 @@ export default class Task extends PureComponent {
                             ref={this.taskInput}
                         />                   
                     </div>
-                    
+
                     <div className = { Styles.actions }>                     
                         <Star
                             onClick = { this._favoriteTask }
@@ -184,8 +184,11 @@ export default class Task extends PureComponent {
                             inlineBlock
                             color1 = '#3B8EF3'
                             color2 = '#000'
-                            color3 = '#3B8EF3'                        
-                        />                           
+                            color3 = '#3B8EF3'   
+                            over={false}
+                            inlineBlock={true}     
+                            checked={false}
+                        />
                     </div>
                 </li>
            
