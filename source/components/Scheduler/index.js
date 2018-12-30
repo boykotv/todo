@@ -148,7 +148,7 @@ export default class Scheduler extends Component {
         return (            
 
             <section className = { Styles.scheduler }>
-                <Spinner isTasksFetching = { isTasksFetching } />
+                <Spinner isSpinning = { isTasksFetching } />
                 <main>
                     
                     <header>
