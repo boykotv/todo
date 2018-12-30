@@ -35,6 +35,7 @@ export default class Task extends PureComponent {
     };   
     static defaultProps = {
         modified: '',
+        created: '',
     };
 
     _getTaskShape = ({
