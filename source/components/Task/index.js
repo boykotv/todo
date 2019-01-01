@@ -57,84 +57,31 @@ export default class Task extends PureComponent {
         }
     }
 
-    _favoriteTask = () => {
-        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
-
-        _updateTaskAsync([{ 
-            'id':        id,
-            'message':   message,
-            'completed': completed,
-            'favorite':  !favorite,
-        }]);
-    }
-
-    _completeTask = () => {
-        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
-
-        _updateTaskAsync([{ 
-            'id':        id,
-            'message':   message,
-            'completed': !completed,
-            'favorite':  favorite,
-        }]);
-    }
-
     _removeTask = () => {
         const { _removeTaskAsync, id } = this.props;
         _removeTaskAsync(id);
     }
 
-    _editTask = () => {
-        const { isTaskEditing } = this.state;
-        if (isTaskEditing) {
-            this.setState({
-                isTaskEditing: false,
-            });
-        }
-        else {
-            this.setState({
-                newMessage: this.props.message,
-                isTaskEditing: true,
-            });
-        }
-    }
-
     _updateTaskMessageOnKeyDown = ( event ) => {
-        // this.setState({
-        //     newMessage: event.target.value,
-        // });       
-    } 
-/* 
-    _updateTaskMessageOnKeyDown = (event) => {  
-        if (event.keyCode == '13') {
-            const { newMessage } = this.state;  
-            if (!newMessage) {
-                return null;
-            } 
-            this.setState({
-                isTaskEditing: true,
-            });
-            const { _updateTaskAsync, id, completed, favorite } = this.props;
+        const { newMessage } = this.state;  
+        if (!newMessage) {
+            return null;
+        } 
 
-            _updateTaskAsync([{ 
-                'id':        id,
-                'message':   newMessage,
-                'completed': completed,
-                'favorite':  favorite,
-            }]);
+        if (event.key == 'Enter') {            
+            this._updateTask();
+        } 
+        else if (event.key ==  'Escape') {            
+            this._cancelUpdatingTaskMessage();
         }
-        else if (event.keyCode == '27') {            
-            this.setState({
-                newMessage: this.props.message,
-                isTaskEditing: true,
-            });
-        }
-    } */
+        this._setTaskEditingState(false);     
+    } 
 
     _setTaskEditingState = (state) => {
         this.setState({
             isTaskEditing: state,
         });
+        //должен переводить фокус в элемент <input />, использовав ref-ссылку taskInput — только в случае перехода в режим редактирования задачи из обычного (32ms)
     }
 
     _updateTask = () => {
@@ -144,7 +91,7 @@ export default class Task extends PureComponent {
             this._setTaskEditingState(false);
             return null;
         }        
-        _updateTaskAsync([this._getTaskShape({})]);
+        _updateTaskAsync(this._getTaskShape({message: newMessage}));
         this._setTaskEditingState(false);
     }
 
@@ -154,32 +101,30 @@ export default class Task extends PureComponent {
         }); 
     }
 
-    _updateTaskMessageOnClick = (event) => {
+    _updateTaskMessageOnClick = () => {
         const { isTaskEditing } = this.state; 
-        if ( !isTaskEditing ) {
-            //✕ компонент должен вызвать метод this._updateTask и вернуть null, если при нажатии на «карандашик» находился в режиме редактирования (7ms)
-            //закончили редактировать - отмена
+        if ( isTaskEditing ) {
+            this._updateTask();            
             return null;
         }
-
         this._setTaskEditingState(!isTaskEditing);
-        // ✕ компонент должен вызвать метод this._updateTaskMessageOnKeyDown при нажатии на клавиши Enter или Escape в режиме редактирования (3ms)
-
-
-
     }
 
     _cancelUpdatingTaskMessage = () => {
-    }
+        this.setState({
+            newMessage: this.props.message,
+        });
+        this._setTaskEditingState(false);
+    }   
 
     _toggleTaskCompletedState = () => {
         const { _updateTaskAsync, completed } = this.props;        
-        _updateTaskAsync([this._getTaskShape({completed: !completed})]);
+        _updateTaskAsync(this._getTaskShape({completed: !completed}));
     }
     
     _toggleTaskFavoriteState = () => {
         const { _updateTaskAsync, favorite } = this.props;        
-        _updateTaskAsync([this._getTaskShape({favorite: !favorite})]); 
+        _updateTaskAsync(this._getTaskShape({favorite: !favorite})); 
     }
 
     render () {
@@ -204,7 +149,7 @@ export default class Task extends PureComponent {
                             type="text" 
                             value = { newMessage }
                             onChange = { this._updateNewTaskMessage }                             
-                            onKeyDown = { this._submitOnEnter }                             
+                            onKeyDown = { this._updateTaskMessageOnKeyDown }    
                             ref={this.taskInput}
                         />                   
                     </div>
@@ -240,8 +185,7 @@ export default class Task extends PureComponent {
                             checked={false}                            
                         />                       
                     </div>
-                </li>
-           
+                </li>           
         );
     }
 }
