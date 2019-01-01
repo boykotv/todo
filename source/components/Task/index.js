@@ -57,46 +57,9 @@ export default class Task extends PureComponent {
         }
     }
 
-    _favoriteTask = () => {
-        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
-
-        _updateTaskAsync([{ 
-            'id':        id,
-            'message':   message,
-            'completed': completed,
-            'favorite':  !favorite,
-        }]);
-    }
-
-    _completeTask = () => {
-        const { _updateTaskAsync, id, message, completed, favorite } = this.props;
-
-        _updateTaskAsync([{ 
-            'id':        id,
-            'message':   message,
-            'completed': !completed,
-            'favorite':  favorite,
-        }]);
-    }
-
     _removeTask = () => {
         const { _removeTaskAsync, id } = this.props;
         _removeTaskAsync(id);
-    }
-
-    _editTask = () => {
-        const { isTaskEditing } = this.state;
-        if (isTaskEditing) {
-            this.setState({
-                isTaskEditing: false,
-            });
-        }
-        else {
-            this.setState({
-                newMessage: this.props.message,
-                isTaskEditing: true,
-            });
-        }
     }
 
     _updateTaskMessageOnKeyDown = ( event ) => {
@@ -222,8 +185,7 @@ export default class Task extends PureComponent {
                             checked={false}                            
                         />                       
                     </div>
-                </li>
-           
+                </li>           
         );
     }
 }
