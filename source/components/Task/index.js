@@ -14,13 +14,12 @@ import Styles from './styles.m.css';
 export default class Task extends PureComponent {
     constructor(props) {
         super(props);
-        // create a ref to store the taskInput DOM element
         this.taskInput = React.createRef();
       }
 
     state = {
         isTaskEditing: true,
-        message: this.props.message,
+        newMessage: this.props.message,
     }
 
     static propTypes = {
@@ -94,22 +93,22 @@ export default class Task extends PureComponent {
         }
         else {
             this.setState({
-                message: this.props.message,
+                newMessage: this.props.message,
                 isTaskEditing: true,
             });
         }
     }
 
     _updateTaskMessageOnKeyDown = ( event ) => {
-        this.setState({
-            message: event.target.value,
-        });       
+        // this.setState({
+        //     newMessage: event.target.value,
+        // });       
     } 
-
-    _submitOnEnter = (event) => {  
+/* 
+    _updateTaskMessageOnKeyDown = (event) => {  
         if (event.keyCode == '13') {
-            const { message } = this.state;  
-            if (!message) {
+            const { newMessage } = this.state;  
+            if (!newMessage) {
                 return null;
             } 
             this.setState({
@@ -119,18 +118,18 @@ export default class Task extends PureComponent {
 
             _updateTaskAsync([{ 
                 'id':        id,
-                'message':   message,
+                'message':   newMessage,
                 'completed': completed,
                 'favorite':  favorite,
             }]);
         }
         else if (event.keyCode == '27') {            
             this.setState({
-                message: this.props.message,
+                newMessage: this.props.message,
                 isTaskEditing: true,
             });
         }
-    }
+    } */
 
     _setTaskEditingState = (state) => {
         this.setState({
@@ -139,25 +138,54 @@ export default class Task extends PureComponent {
     }
 
     _updateTask = () => {
+        const { _updateTaskAsync, message } = this.props;    
+        const { newMessage } = this.state;
+        if (message == newMessage) {
+            this._setTaskEditingState(false);
+            return null;
+        }        
+        _updateTaskAsync([this._getTaskShape({})]);
+        this._setTaskEditingState(false);
     }
 
-    _updateNewTaskMessage = () => {
+    _updateNewTaskMessage = (event) => {
+        this.setState({
+            newMessage: event.target.value,
+        }); 
     }
 
-    _updateTaskMessageOnClick = () => {
+    _updateTaskMessageOnClick = (event) => {
+        const { isTaskEditing } = this.state; 
+        if ( !isTaskEditing ) {
+            //✕ компонент должен вызвать метод this._updateTask и вернуть null, если при нажатии на «карандашик» находился в режиме редактирования (7ms)
+            //закончили редактировать - отмена
+            return null;
+        }
+
+        this._setTaskEditingState(!isTaskEditing);
+        // ✕ компонент должен вызвать метод this._updateTaskMessageOnKeyDown при нажатии на клавиши Enter или Escape в режиме редактирования (3ms)
+
+
+
     }
+
     _cancelUpdatingTaskMessage = () => {
     }
+
     _toggleTaskCompletedState = () => {
+        const { _updateTaskAsync, completed } = this.props;        
+        _updateTaskAsync([this._getTaskShape({completed: !completed})]);
     }
+    
     _toggleTaskFavoriteState = () => {
+        const { _updateTaskAsync, favorite } = this.props;        
+        _updateTaskAsync([this._getTaskShape({favorite: !favorite})]); 
     }
 
     render () {
         
         const { favorite, completed } = this.props;
-        const { isTaskEditing, message } = this.state;
-        //const { id, completed, favorite, message } = this._getTaskShape(this.props);
+        const { isTaskEditing, newMessage } = this.state;
 
         return (      
                 <li className = { Styles.task }>
@@ -168,23 +196,22 @@ export default class Task extends PureComponent {
                             className = { Styles.toggleTaskCompletedState }
                             color1 = '#3B8EF3'
                             color2 = '#FFF'
-                            onClick = { this._completeTask }
+                            onClick = { this._toggleTaskCompletedState }
                         /> 
                         <input 
                             disabled = { isTaskEditing } 
                             maxLength = "50" 
                             type="text" 
-                            value = { message }
-                            onChange = { this._updateTaskMessageOnKeyDown } 
-                            onKeyDown = { this._submitOnEnter } 
-                            
+                            value = { newMessage }
+                            onChange = { this._updateNewTaskMessage }                             
+                            onKeyDown = { this._submitOnEnter }                             
                             ref={this.taskInput}
                         />                   
                     </div>
 
                     <div className = { Styles.actions }>                     
                         <Star
-                            onClick = { this._favoriteTask }
+                            onClick = { this._toggleTaskFavoriteState }
                             inlineBlock
                             checked = { favorite }
                             className = { Styles.toggleTaskFavoriteState }
@@ -193,7 +220,8 @@ export default class Task extends PureComponent {
                             color3 = '#3B8EF3'                        
                         />
                         <Edit   
-                            onClick = { this._editTask }
+                            onClick = { this._updateTaskMessageOnClick }
+                            className = { Styles.updateTaskMessageOnClick }
                             inlineBlock                         
                             checked = { !isTaskEditing }                        
                             className = { Styles.updateTaskMessageOnClick }
@@ -201,15 +229,16 @@ export default class Task extends PureComponent {
                             color2 = '#000'
                         />
                         <Remove        
-                            onClick = { this._removeTask }                   
+                            onClick = { this._removeTask }
+                            className = { Styles.removeTask }
                             inlineBlock
                             color1 = '#3B8EF3'
                             color2 = '#000'
                             color3 = '#3B8EF3'   
                             over={false}
                             inlineBlock={true}     
-                            checked={false}
-                        />
+                            checked={false}                            
+                        />                       
                     </div>
                 </li>
            
