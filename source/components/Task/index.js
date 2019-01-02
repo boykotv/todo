@@ -18,7 +18,7 @@ export default class Task extends PureComponent {
       }
 
     state = {
-        isTaskEditing: true,
+        isTaskEditing: false,
         newMessage: this.props.message,
     }
 
@@ -70,17 +70,18 @@ export default class Task extends PureComponent {
 
         if (event.key == 'Enter') {            
             this._updateTask();
+            this._setTaskEditingState(false);
         } 
         else if (event.key ==  'Escape') {            
             this._cancelUpdatingTaskMessage();
-        }
-        this._setTaskEditingState(false);     
+            this._setTaskEditingState(false);
+        }             
     } 
 
     _setTaskEditingState = (state) => {
         this.setState({
             isTaskEditing: state,
-        });
+        });        
         //должен переводить фокус в элемент <input />, использовав ref-ссылку taskInput — только в случае перехода в режим редактирования задачи из обычного (32ms)
     }
 
@@ -144,8 +145,8 @@ export default class Task extends PureComponent {
                             onClick = { this._toggleTaskCompletedState }
                         /> 
                         <input 
-                            disabled = { isTaskEditing } 
-                            maxLength = "50" 
+                            disabled = { !isTaskEditing } 
+                            maxLength = { 50 } 
                             type="text" 
                             value = { newMessage }
                             onChange = { this._updateNewTaskMessage }                             
@@ -157,18 +158,17 @@ export default class Task extends PureComponent {
                     <div className = { Styles.actions }>                     
                         <Star
                             onClick = { this._toggleTaskFavoriteState }
-                            inlineBlock
+                            inlineBlock =  {true }
                             checked = { favorite }
                             className = { Styles.toggleTaskFavoriteState }
                             color1 = '#3B8EF3'
-                            color2 = '#000'
-                            color3 = '#3B8EF3'                        
+                            color2 = '#000'                            
                         />
                         <Edit   
                             onClick = { this._updateTaskMessageOnClick }
                             className = { Styles.updateTaskMessageOnClick }
                             inlineBlock                         
-                            checked = { !isTaskEditing }                        
+                            checked = { isTaskEditing }                        
                             className = { Styles.updateTaskMessageOnClick }
                             color1 = '#3B8EF3'
                             color2 = '#000'
@@ -176,16 +176,13 @@ export default class Task extends PureComponent {
                         <Remove        
                             onClick = { this._removeTask }
                             className = { Styles.removeTask }
-                            inlineBlock
+                            inlineBlock = { true }
                             color1 = '#3B8EF3'
                             color2 = '#000'
-                            color3 = '#3B8EF3'   
-                            over={false}
-                            inlineBlock={true}     
-                            checked={false}                            
-                        />                       
+                            inlineBlock = { true }                        
+                        /> 
                     </div>
-                </li>           
-        );
+                </li> 
+            );
     }
 }
