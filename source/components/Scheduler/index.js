@@ -40,15 +40,8 @@ export default class Scheduler extends Component {
     }
 
     _updateTasksFilter = ( event ) => {    
-        const filterWord = event.target.value.toLowerCase();
-        const { tasks } = this.state;
-
-        const result = tasks.filter(task => task.message.indexOf(filterWord) != -1);
-        console.log('result', result);
-
         this.setState({
-            //tasks: tasks.filter(task => task.message.indexOf(filterWord) != -1), //?
-            tasksFilter: filterWord,
+            tasksFilter: event.target.value.toLowerCase(),
         });
     } 
 
@@ -151,10 +144,11 @@ export default class Scheduler extends Component {
 
     render () {
         const { tasks, isTasksFetching, newTaskMessage, tasksFilter } = this.state;
+        const filtered_tasks = tasks.filter(task => task.message.indexOf(tasksFilter) != -1);
 
         const completeAll = this._getAllCompleted();
                
-        const tasksJSX = tasks.map(( task ) => {
+        const tasksJSX = filtered_tasks.map(( task ) => {
             return <Catcher key = { task.id }>
                         <Task {...task} 
                             _updateTaskAsync = { this._updateTaskAsync } 
