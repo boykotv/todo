@@ -62,20 +62,22 @@ export default class Task extends PureComponent {
         _removeTaskAsync(id);
     }
 
-    _updateTaskMessageOnKeyDown = ( event ) => {
+    _updateTaskMessageOnKeyDown = ( event ) => {  
         const { newMessage } = this.state;  
         if (!newMessage) {
-            return null;
+            return null;            
         } 
+
+        if (event.key ==  'Escape') {            
+            this._cancelUpdatingTaskMessage();
+            this._setTaskEditingState(false);
+            return;
+        }         
 
         if (event.key == 'Enter') {            
             this._updateTask();
             this._setTaskEditingState(false);
         } 
-        else if (event.key ==  'Escape') {            
-            this._cancelUpdatingTaskMessage();
-            this._setTaskEditingState(false);
-        }             
     } 
 
     _setTaskEditingState = (state) => {
@@ -92,6 +94,9 @@ export default class Task extends PureComponent {
             this._setTaskEditingState(false);
             return null;
         }        
+        if (!newMessage) {
+            
+        }
         _updateTaskAsync(this._getTaskShape({message: newMessage}));
         this._setTaskEditingState(false);
     }
@@ -103,7 +108,7 @@ export default class Task extends PureComponent {
     }
 
     _updateTaskMessageOnClick = () => {
-        const { isTaskEditing } = this.state; 
+        const { isTaskEditing } = this.state;  
         if ( isTaskEditing ) {
             this._updateTask();            
             return null;

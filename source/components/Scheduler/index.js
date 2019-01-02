@@ -45,15 +45,13 @@ export default class Scheduler extends Component {
         });
     } 
 
-    _createTaskAsync = async (event) => {
-        
-        
+    _createTaskAsync = async (event) => {        
+        event.preventDefault();  
         const {newTaskMessage} = this.state;        
         if (!newTaskMessage) {
             return null;
         };      
-        this._setTasksFetchingState(true);
-        event.preventDefault();        
+        this._setTasksFetchingState(true);              
 
         const task = await api.createTask(newTaskMessage);        
         this.setState(({tasks}) => ({
@@ -119,7 +117,6 @@ export default class Scheduler extends Component {
         const { tasks } = this.state;
            
         const tasks_for_complete = tasks.filter((task) => task.completed === false );    
-        console.log('tasks_for_complete', tasks_for_complete);
         
         await api.completeAllTasks(tasks_for_complete); //передать только невыполненые
 
@@ -151,16 +148,13 @@ export default class Scheduler extends Component {
         const completeAll = this._getAllCompleted();
                
         const tasksJSX = tasks.map(( task ) => {
-            return <Catcher key = { task.id }>
-                        <Task  {...task} 
-                              _updateTaskAsync = { this._updateTaskAsync } 
-                              _removeTaskAsync = { this._removeTaskAsync } 
-                        />
-                    </Catcher>;
+            return <Task key = { task.id } {...task} 
+                        _updateTaskAsync = { this._updateTaskAsync } 
+                        _removeTaskAsync = { this._removeTaskAsync } 
+                    />;
         });
 
-        return (            
-
+        return ( 
             <section className = { Styles.scheduler }>
                 <Spinner isSpinning = { isTasksFetching } />
                 <main>
@@ -173,7 +167,7 @@ export default class Scheduler extends Component {
                             placeholder = "Поиск"          
                             value = { tasksFilter }
                         />
-                    </header>
+                    </header>           
 
                     <section>
                         <form onSubmit = { this._handleFormSubmit }>
@@ -184,9 +178,11 @@ export default class Scheduler extends Component {
                                 onChange = { this._updateNewTaskMessage } 
                                 onKeyPress = { this._submitOnEnter } 
                                 value = { newTaskMessage } 
+                                className = { Styles.createTask }
                             />
                             <button >Добавить задачу</button>
                         </form>
+
                         <div>
                             <ul>
                                 <div style = { { position: 'relative' } }>
@@ -207,8 +203,7 @@ export default class Scheduler extends Component {
                     </footer>
 
                 </main>
-            </section>
-          
+            </section>         
         );
     }
 }
