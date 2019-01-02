@@ -148,10 +148,12 @@ export default class Scheduler extends Component {
         const completeAll = this._getAllCompleted();
                
         const tasksJSX = tasks.map(( task ) => {
-            return <Task key = { task.id } {...task} 
-                        _updateTaskAsync = { this._updateTaskAsync } 
-                        _removeTaskAsync = { this._removeTaskAsync } 
-                    />;
+            return <Catcher key = { task.id }>
+                        <Task {...task} 
+                            _updateTaskAsync = { this._updateTaskAsync } 
+                            _removeTaskAsync = { this._removeTaskAsync } 
+                         />
+                    </Catcher>;
         });
 
         return ( 

@@ -94,9 +94,7 @@ export default class Task extends PureComponent {
             this._setTaskEditingState(false);
             return null;
         }        
-        if (!newMessage) {
-            
-        }
+        
         _updateTaskAsync(this._getTaskShape({message: newMessage}));
         this._setTaskEditingState(false);
     }
