@@ -117,8 +117,7 @@ export default class Scheduler extends Component {
         this._setTasksFetchingState(true);
         const { tasks } = this.state;
            
-        const tasks_for_complete = tasks.filter((task) => task.completed === false );    
-        
+        const tasks_for_complete = tasks.filter((task) => !task.completed );    
         await api.completeAllTasks(tasks_for_complete); //передать только невыполненые
 
         tasks.map((task) => task.completed = true );        
