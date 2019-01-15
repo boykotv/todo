@@ -49,14 +49,6 @@ export default class Task extends PureComponent {
         message,
     });
 
-
-    componentDidUpdate(nextProps, nextState) {
-        const { isTaskEditing } = this.state;
-        if (!isTaskEditing) {           
-            this.taskInput.current.focus();
-        }
-    }
-
     _removeTask = () => {
         const { _removeTaskAsync, id } = this.props;
         _removeTaskAsync(id);
@@ -83,8 +75,11 @@ export default class Task extends PureComponent {
     _setTaskEditingState = (state) => {
         this.setState({
             isTaskEditing: state,
-        });        
-        //должен переводить фокус в элемент <input />, использовав ref-ссылку taskInput — только в случае перехода в режим редактирования задачи из обычного (32ms)
+        },
+        () => {
+            state && this.taskInput.current.focus();
+           }
+        );
     }
 
     _updateTask = () => {
