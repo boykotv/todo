@@ -27,14 +27,14 @@ export const api = {
         return task;
     },
     
-    async updateTask (params) {
+    async updateTask (task_params) {
         const response = await fetch(MAIN_URL, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: TOKEN,
             },
-            body: JSON.stringify(params),
+            body: JSON.stringify(task_params),
         });
     
         const { data: tasks } = await response.json(); 
