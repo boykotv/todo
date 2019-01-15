@@ -145,7 +145,7 @@ export default class Scheduler extends Component {
 
     render () {
         const { tasks, isTasksFetching, newTaskMessage, tasksFilter } = this.state;
-        const filtered_tasks = tasks.filter(task => task.message.indexOf(tasksFilter) != -1);
+        const filtered_tasks = tasks.filter(task => task.message.includes(tasksFilter));
 
         const completeAll = this._getAllCompleted();
                
